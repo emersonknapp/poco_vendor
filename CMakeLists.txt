@@ -3,7 +3,9 @@ project(poco_vendor VERSION "1.1.1")
 
 # Can work with poco 1.4.1p1 (earliest to use recursive mutexes on Linux)
 # 1.6.1 is the first version to ship with PocoConfigVersion.cmake
-find_package(Poco "1.6.1" COMPONENTS Foundation QUIET)
+if(NOT FORCE_BUILD_POCO)
+  find_package(Poco "1.6.1" COMPONENTS Foundation QUIET)
+endif()
 
 if(NOT Poco_FOUND)
   # If Poco was not found, download and build from source
@@ -15,6 +17,7 @@ if(NOT Poco_FOUND)
   else()
     list(APPEND extra_cmake_args "-DCMAKE_C_FLAGS=-Wno-shift-negative-value")
     list(APPEND extra_cmake_args "-DCMAKE_CXX_STANDARD=14")
+    list(APPEND extra_cmake_args "-DCMAKE_CXX_FLAGS=-stdlib=libc++")
     if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND NOT ANDROID)
       list(APPEND extra_cmake_args "-DPOCO_UNBUNDLED:BOOL=ON")
     endif()
